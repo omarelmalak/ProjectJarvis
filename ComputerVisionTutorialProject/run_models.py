@@ -3,9 +3,9 @@ import cv2
 import numpy as np
 
 if __name__ == "__main__":
-    model = tf.keras.models.load_model("./trained_models/new_model4.ckpt")
+    model = tf.keras.models.load_model("./trained_models/vgg16_5epoch.ckpt")
 
-    image = cv2.imread("./media/input_media/radio.png")
+    image = cv2.imread("./media/input_media/jilly_side_facing.png")
     image = cv2.resize(image, (64, 64))
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     numpy_image = np.array(image_rgb)

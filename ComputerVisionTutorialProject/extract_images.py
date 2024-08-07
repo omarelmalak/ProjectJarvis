@@ -15,15 +15,14 @@ class Helpers:
             reshaped_image = image.reshape((64, 64, 3))
 
             # DISPLAY IMAGE:
-            """
+
             plt.imshow(reshaped_image)
             plt.axis("off")
             plt.show()
-            """
 
-            file_name = "radio.png"
+            # file_name = "radio.png"
 
-            plt.imsave(images_base_address + file_name, reshaped_image)
+            # plt.imsave(images_base_address + file_name, reshaped_image)
 
 
 if __name__ == "__main__":

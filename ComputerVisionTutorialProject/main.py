@@ -3,6 +3,7 @@ import mediapipe as mp
 import os
 import argparse
 import tensorflow as tf
+import numpy as np
 
 INPUT_DIRECTORY = "./media/input_media"
 OUTPUT_DIRECTORY = "./media/output_media"
@@ -48,7 +49,7 @@ class CV2Helpers:
                 w = int(w * image_width)
                 h = int(h * image_height)
 
-                image[y1: y1 + h, x1:x1 + w, :] = cv2.blur(image[y1:(y1 + h), x1:(x1 + w), :], (30, 30))
+                image[y1: y1 + h, x1:x1 + w, :] = cv2.blur(image[y1:(y1 + h), x1:(x1 + w), :], (90, 90))
                 image = cv2.rectangle(image, (x1, y1), (x1 + w, y1 + h), (0, 255, 0), 2)
 
         return image
@@ -65,7 +66,17 @@ class InputHandlers:
 
     @staticmethod
     def handle_video(args, face_detection):
-        model = tf.keras.models.load_model("./trained_models/new_model2.keras")
+        model = tf.keras.models.load_model("./trained_models/vgg16_5epoch.ckpt")
+
+        image = cv2.imread("./media/input_media/phone.png")
+        image = cv2.resize(image, (64, 64))
+        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        numpy_image = np.array(image_rgb)
+        numpy_image = np.expand_dims(numpy_image, axis=0)
+
+        predictions = model.predict(numpy_image)
+
+        print(predictions)
 
         video_capture = cv2.VideoCapture(args.filePath)
         ret, frame = video_capture.read()

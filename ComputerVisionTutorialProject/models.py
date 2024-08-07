@@ -21,18 +21,19 @@ import seaborn as sns
 
 
 def label_to_numpy(labels):
-  final_labels = np.zeros((len(labels), 4))
-  for i in range(len(labels)):
-    label = labels[i]
-    if label == 'Attentive':
-      final_labels[i,:] = np.array([1, 0, 0, 0])
-    if label == 'DrinkingCoffee':
-      final_labels[i,:] = np.array([0, 1, 0, 0])
-    if label == 'UsingMirror':
-      final_labels[i,:] = np.array([0, 0, 1, 0])
-    if label == 'UsingRadio':
-      final_labels[i,:] = np.array([0, 0, 0, 1])
-  return final_labels
+    final_labels = np.zeros((len(labels), 4))
+    for i in range(len(labels)):
+        label = labels[i]
+        if label == 'Attentive':
+          final_labels[i,:] = np.array([1, 0, 0, 0])
+        if label == 'DrinkingCoffee':
+          final_labels[i,:] = np.array([0, 1, 0, 0])
+        if label == 'UsingMirror':
+          final_labels[i,:] = np.array([0, 0, 1, 0])
+        if label == 'UsingRadio':
+          final_labels[i,:] = np.array([0, 0, 0, 1])
+    return final_labels
+
 
 class pkg:
     #### DOWNLOADING AND LOADING DATA
@@ -319,8 +320,9 @@ class models:
                                                   include_top = False,
                                                   input_shape = nn_params['input_shape'])
         for layer in expert_conv.layers:
-          layer.trainable = trainable
+            layer.trainable = trainable
 
+        # Create a sequential model and add the pre-trained base model
         expert_model = tf.keras.models.Sequential()
         expert_model.add(expert_conv)
         expert_model.add(GlobalAveragePooling2D())
@@ -366,7 +368,7 @@ if __name__ == "__main__":
     CNNClassifier       = lambda num_hidden_layers: models.CNNClassifier(num_hidden_layers, nn_params = nn_params)
     TransferClassifier  = lambda name: models.TransferClassifier(name = name, nn_params = nn_params)
 
-    monitor = tf.keras.callbacks.ModelCheckpoint('./model.keras', monitor='val_accuracy', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', save_freq='epoch')
+    monitor = tf.keras.callbacks.ModelCheckpoint('trained_models/vgg16_5epoch.ckpt', monitor='val_accuracy', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', save_freq='epoch')
 
     # get a table with information about ALL of our images
     metadata = pkg.get_metadata(metadata_path, ['train','test'])
@@ -392,12 +394,12 @@ if __name__ == "__main__":
 
     selected_model = models.TransferClassifier("VGG16", nn_params)
 
-    selected_model.fit(train_data, train_labels, epochs=5, validation_data=(test_data, test_labels), shuffle=True,
-                  callbacks=[monitor])
+    selected_model.fit(train_data, train_labels, epochs=5, validation_data=(test_data, test_labels), shuffle=True, callbacks = [monitor])
 
+    # selected_model.save('my_model.h5')
 
     """
-    vgg_expert = tf.keras.applications.VGG16(weights="./vgg16_weights_tf_dim_ordering_tf_kernels_notop.h5", include_top=False, input_shape=(64, 64, 3))
+    vgg_expert = tf.keras.applications.VGG16(weights='imagenet', include_top=False, input_shape=(64, 64, 3))
 
     vgg_model = tf.keras.models.Sequential()
 
@@ -424,7 +426,7 @@ if __name__ == "__main__":
                       optimizer=optimizers.SGD(learning_rate=1e-4, momentum=0.95),
 
                       metrics=['accuracy'])
-
     vgg_model.fit(train_data, train_labels, epochs=2, validation_data=(test_data, test_labels), shuffle=True,
-                  callbacks=[monitor])
+                  callbacks=[])
+    vgg_model.save('my_model.keras')
     """
