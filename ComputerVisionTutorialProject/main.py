@@ -2,9 +2,11 @@ import cv2
 import mediapipe as mp
 import os
 import argparse
+import tensorflow as tf
 
 INPUT_DIRECTORY = "./media/input_media"
 OUTPUT_DIRECTORY = "./media/output_media"
+PATH_TO_MODEL = "./trained_models/new_model2.keras"
 
 
 class GeneralHelpers:
@@ -63,6 +65,8 @@ class InputHandlers:
 
     @staticmethod
     def handle_video(args, face_detection):
+        model = tf.keras.models.load_model("./trained_models/new_model2.keras")
+
         video_capture = cv2.VideoCapture(args.filePath)
         ret, frame = video_capture.read()
 
