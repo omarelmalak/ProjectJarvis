@@ -23,7 +23,7 @@ class GeneralHelpers:
     def configure_args():
         args = argparse.ArgumentParser()
         args.add_argument("--mode", default="video")
-        args.add_argument("--filePath", default=f"{INPUT_DIRECTORY}/tanveer_goofy_video.mp4")
+        args.add_argument("--filePath", default=f"{INPUT_DIRECTORY}/jilly_driving.mov")
 
         args = args.parse_args()
 
@@ -57,7 +57,7 @@ class CV2Helpers:
                 w = int(w * image_width)
                 h = int(h * image_height)
 
-                # image[y1: y1 + h, x1:x1 + w, :] = cv2.blur(image[y1:(y1 + h), x1:(x1 + w), :], (90, 90))
+                image[y1: y1 + h, x1:x1 + w, :] = cv2.blur(image[y1:(y1 + h), x1:(x1 + w), :], (90, 90))
                 image = cv2.rectangle(image, (x1, y1), (x1 + w, y1 + h), color, 2)
 
         return image
@@ -74,12 +74,12 @@ class InputHandlers:
 
     @staticmethod
     def handle_video(args, face_detection):
-        model = tf.keras.models.load_model("./trained_models/vgg16_5epoch_regularizer.ckpt")
+        model = tf.keras.models.load_model("./trained_models/vgg16_5epoch.ckpt")
 
         video_capture = cv2.VideoCapture(args.filePath)
         ret, frame = video_capture.read()
 
-        output_video = cv2.VideoWriter(os.path.join(OUTPUT_DIRECTORY, "tanveer_goofy_video_output_regularizer.mp4"),
+        output_video = cv2.VideoWriter(os.path.join(OUTPUT_DIRECTORY, "jilly_attentive_blurred_vgg16_5epoch.mp4"),
                                        cv2.VideoWriter_fourcc(*"MP4V"),
                                        25,
                                        (frame.shape[1], frame.shape[0]))
@@ -98,6 +98,9 @@ class InputHandlers:
             prediction = predictions[0]
             prediction_as_list = prediction.tolist()
 
+            print(prediction)
+            print(prediction_as_list)
+
             # print(prediction_as_list)
 
             max_probability = max(prediction_as_list)
@@ -108,12 +111,16 @@ class InputHandlers:
             # print(np.array_equal(prediction, np.array([1, 0, 0, 0])))
 
             if index_of_max == 0:
+                # ATTENTIVE
                 color = GREEN
             elif index_of_max == 1:
+                # DRINKING COFFEE
                 color = BLUE
             elif index_of_max == 2:
+                # USING MIRROR
                 color = PURPLE
             elif index_of_max == 3:
+                # USING RADIO
                 color = TURQUOISE
             else:
                 color = RED
